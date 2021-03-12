@@ -1,0 +1,29 @@
+---
+- hosts: all,localhost
+  become: true
+  tasks:
+    - name: Install docker
+      apt: name=docker.io state=latest
+
+    - name: create dir
+      ansible.builtin.file:
+        path: ./helloworld
+        state: directory
+        mode: '0755'
+
+    - name: git checkout
+      ansible.builtin.git:
+        repo: 'https://github.com/ssid334/d20b11b7-ef81-420f-8c81-8eaf5e3a19c4.git'
+        dest: ./helloworld
+
+    - name:
+      docker_image:
+        name: helloworld.image
+        tag: 0.0.1
+        build:
+          path: ./helloworld
+        source: build
+        state: present
+
+
+
