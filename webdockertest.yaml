@@ -3,7 +3,13 @@
   become: true
   tasks:
     - name: Install docker
-      apt: name=docker.io state=latest
+      apt:
+        pkg:
+          - docker.io
+          - python3-pip
+          - python3-docker
+        state: latest
+        update_cache: true
 
     - name: create dir
       ansible.builtin.file:
@@ -25,5 +31,18 @@
         source: build
         state: present
 
-
+    - name: application container
+      docker_container:
+        name: helloworld
+        image: helloworld.image:0.0.1
+        state: present
+        detach: yes
+        pull: no
+        ports:
+          - "1433:443"
+        command: sleep infinity
+        restart_policy: always
+        container_default_behavior: no_defaults
+        detach: true
+        command: python3 main.py
 
